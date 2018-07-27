@@ -100,7 +100,16 @@ app.post('/users',(req,res)=>{
     });
 });
 
-
+app.post('/users/login',(req,res)=>{
+    var body = _.pick(req.body,['email','password']);
+    User.findByCredentials(body.email,body.password).then((user)=>{
+        return user.generateAuthToken().then((token)=>{
+            res.send(token);
+        });
+    }).catch((e)=>{
+        res.status(400).send();
+    });
+});
 
 app.get('/users/me',authenticate,(req,res)=>{
     res.send(req.user);
